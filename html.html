@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+  <script src="data.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+ 
+
+<header><h2>Lorem Ipsum Dolor</h2></header>
+
+<div class="row">
+ 
+   <div class="col-sm-3">
+    <svg width="90%" height="40" >
+      <rect width="100%" height="100%" style="fill:#1051a2;" />
+      <!--<img class="icon" src="demanda.png" alt="Socket" height="10%" width="10%">-->
+      <text class="title" x="33%" y="62%">DEMANDA</text>
+    </svg>
+    <svg width="90%" height="110" >
+      <rect width="100%" height="100%" style="fill:#f06060;" />
+      <text class="title" x="36%" y="45%">Máximo</text>
+      <text id="max" x="36%" y="65%"></text>
+    </svg>
+    <svg width="90%" height="110" >
+      <rect width="100%" height="100%" style="fill:#fa987d;" />
+      <text class="title" x="36%" y="45%">Mínimo</text>
+      <text id="min" x="37%" y="65%"></text>
+    </svg>
+    <img src="image.jpg" class="img-rounded" alt="Light Bulbs" height="100%" width="90%">
+   </div>
+  
+
+   <div class="col-sm-5">
+        <svg width="100%" height="100%" >
+          <rect width="100%" height="100%" style="fill:#72cca7;" /> 
+       </svg>
+       <div id="middle">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ornare porta malesuada. Sed eget ullamcorper sem, non imperdiet leo. Duis in commodo neque, sed consectetur quam. Phasellus ac pharetra felis, vitae tristique ligula. In hac habitasse platea dictumst. In at magna libero.<br><br> Quisque dictum enim sit amet lectus tempus, nec tincidunt dolor mollis. Quisque dictum enim sit amet lectus tempus, nec tincidunt dolor mollis. </div>
+       <div id="chart"></div>
+   </div>
+   
+   <div class="col-sm-4">
+     
+      <h4>Lorem Ipsum</h4> 
+      <small>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ornare porta malesuada. Sed eget ullamcorper sem, non imperdiet leo. Duis in commodo neque, sed consectetur quam. Phasellus ac pharetra felis, vitae tristique ligula. In hac habitasse platea dictumst. In at magna libero. Quisque dictum enim sit amet lectus tempus, nec tincidunt dolor mollis.</small>
+      <br><br><small>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ornare porta malesuada. Sed eget ullamcorper sem, non imperdiet leo. Duis in commodo neque, sed consectetur quam. Phasellus ac pharetra felis, vitae tristique ligula. In hac habitasse platea dictumst. In at magna libero. Quisque dictum enim sit amet lectus tempus, nec tincidunt dolor mollis.</small>
+      
+   </div>    
+   
+</div>
+
+<footer>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <a href="#" class="fa fa-twitter"></a>
+    <a href="#" class="fa fa-youtube"></a>
+    <a href="#" class="fa fa-instagram"></a>
+</footer>
+
+   <script>
+
+
+     //var parseTime = d3.timeParse("%B %d, %Y");
+     var parseTime = d3.timeParse("%d-%b-%y");
+     var formatTime = d3.timeFormat("%B %d, %Y");
+     //formatTime(new Date); // "June 30, 2015" 
+
+      var firstData = [];
+      var secondData = [];
+      var tmpArray = [];
+        
+        //First set
+        for (i=0; i<data.sets[0].data.length; i++){
+          if (data.sets[0].data[i] != null){
+            //t = data.timeseries[i];
+             firstData.push({
+                   time:  data.timeseries[i],
+                   value: data.sets[0].data[i]    
+               });
+              tmpArray[i] = data.sets[0].data[i]; 
+            //console.log("ARRAY: "+firstData[i].value+" - "+formatTime(firstData[i].time));
+          }  
+        }
+       
+
+       var firstMaxAmount = Math.max(...tmpArray);
+       var firstMinAmount = Math.min(...tmpArray);
+       console.log("1: "+firstMaxAmount+" "+firstMinAmount);
+
+        //Second set
+        for (i=0; i<data.sets[1].data.length; i++){
+          if (data.sets[1].data[i] != null){
+            //t = data.timeseries[i];
+             secondData.push({
+                   time: data.timeseries[i],
+                   value: data.sets[1].data[i]    
+               });
+              tmpArray[i] = data.sets[1].data[i]; 
+            //console.log("ARRAY: "+array[i].value+" - "+array[i].time);
+          }  
+        }
+
+        var secondMaxAmount = Math.max(...tmpArray);
+        var secondMinAmount = Math.min(...tmpArray);
+        console.log("2: "+secondMaxAmount+" "+secondMinAmount);
+
+        var firstLength = firstData.length;
+        var secondLength = secondData.length;
+        //var maxLength = Math.max(firstLength, secondLength);
+        data.timeseries.splice(Math.max(firstLength, secondLength), data.timeseries.length);
+       
+
+        //Max amount
+        document.getElementById("max").textContent += Math.max(firstMaxAmount, secondMaxAmount).toString()+" "+data.sets[0].units;
+
+        //Min amount
+         document.getElementById("min").textContent += Math.min(firstMinAmount, secondMinAmount).toString()+" "+data.sets[0].units;
+
+
+          var margin = {top: 20, right: 20, bottom: 70, left: 60},
+              width = parseInt(d3.select("#chart").style("width"))- margin.left - margin.right,
+              height = parseInt(d3.select("#chart").style("height"))- margin.top - margin.bottom;
+
+
+            // Append SVG 
+                var svg = d3.select("#chart")
+                            .append("svg")
+                            .attr("width", width + margin.left + margin.right)
+                            .attr("height", height + margin.top + margin.bottom)
+                            .append("g")
+                            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            
+    
+
+            // Create scale
+            var x_scale = d3.scaleTime()
+                            .domain(d3.extent(data.timeseries))
+                            .range([0,width]);
+
+            var y_scale = d3.scaleLinear()
+                            .domain([0, d3.max(data.sets[0].data)])
+                            .range([height,0]);
+
+
+            // define the lines
+            var firstLine = d3.line()
+                .x(function(d) { return x_scale(d.time); })
+                .y(function(d) { return y_scale(d.value); })
+                .curve(d3.curveLinear);
+                
+
+            var secondLine = d3.line()
+                .x(function(d) { return x_scale(d.time); })
+                .y(function(d) { return y_scale(d.value); })
+                .curve(d3.curveLinear);
+
+
+            // Add scales to axis
+            var x_axis = d3.axisBottom()
+                           .scale(x_scale)
+                           .tickFormat(d3.timeFormat("%H:%M:%S"))
+                           .ticks(d3.timeSecond.every(30));
+            
+
+            var y_axis = d3.axisLeft()
+                           .scale(y_scale);
+
+            var firstLineActive = true;
+            var secondLineActive = false;
+
+            // Add the line paths.
+              svg.append("path")
+                  .attr("d", firstLine(firstData))
+                  .attr("class", "line")
+                  .attr("id", "first")
+                  .attr("stroke", "#f06060")
+                  .attr("stroke-width", 2)
+                  .attr("fill", "none")
+                  .on("click", function(){
+
+                  }); 
+                  
+
+              svg.append("path")
+                  .attr("d", secondLine(secondData))
+                  .attr("class", "line")
+                  .attr("id", "second")
+                  .attr("stroke", "#1051a2")
+                  .attr("stroke-width", 2)
+                  .attr("fill", "none")
+                
+
+
+            // Add the scatterplot
+                /*svg.selectAll("dot")
+                    .data(array)
+                  .enter().append("circle")
+                    .attr("r", 2)
+                    .attr("cx", function(d) { return x_scale(d.time); })
+                    .attr("cy", function(d) { return y_scale(d.value); });*/
+                
+
+           // Add the X and Y Axis
+
+            svg.append("g")    
+               .attr("class", "x axis")
+               .attr("transform", "translate(0," + height + ")")
+               .call(x_axis)
+               .selectAll("text")
+                   .attr("y", 0)
+                   .attr("x", 9)
+                   .attr("dy", ".35em")
+                   .attr("transform", "rotate(60)")
+                   .style("text-anchor", "start")
+            
+            svg.append("g")    
+               .attr("class", "y axis")
+               .call(y_axis);
+
+
+            // text label for the x axis
+              svg.append("text")             
+                  .attr("transform", "translate(" + (width/2*0.75) + "," + (height + margin.top + 50) + ")")
+                  .style("text-anchor", "middle")
+                  .text("Time (18 Enero 1970)");
+
+               // text label for the y axis
+              svg.append("text")             
+                  .attr("transform", "rotate(-90)")
+                        .attr("y", 10 - margin.left)
+                        .attr("x",0 - (height / 2))
+                        .attr("dy", "1em")
+                        .style("text-anchor", "middle")
+                        .text(data.sets[0].label+" ("+data.sets[0].units+ ")");  
+
+
+              svg.append("text")
+                  .attr("transform", "translate("+ (width*0.75) +", "+ y_scale(firstData[firstData.length-1].value) + ")")
+                  .attr("class", "label")
+                  .attr("dy", ".35em")
+                  .attr("text-anchor", "start")
+                  .style("fill", "#f06060")
+                  .text(data.sets[0].name);
+
+                svg.append("text")
+                  .attr("transform", "translate("+ (width*0.75) +", " + y_scale(secondData[secondData.length-1].value) + ")")
+                  .attr("class", "label")
+                  .attr("dy", ".35em")
+                  .attr("text-anchor", "start")
+                  .style("fill", "#1051a2")
+                  .text(data.sets[1].name);
+
+
+                // Define responsive behavior
+                    function resize() {
+                      var width = parseInt(d3.select("#chart").style("width")) - margin.left - margin.right,
+                      height = parseInt(d3.select("#chart").style("height")) - margin.top - margin.bottom;
+
+                      // Update the range of the scale with new width/height
+                      x_scale.range([0, width*0.75]);
+                      y_scale.range([height, 0]);
+
+                      // Update the axis and text with the new scale
+                      svg.select('.x.axis')
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(x_axis);
+
+                      svg.select('.y.axis')
+                        .call(y_axis);
+
+                      // Force D3 to recalculate and update the line
+                      svg.select('#first')
+                             .attr("d", firstLine(firstData))
+                      
+                      svg.select('#second')
+                             .attr("d", secondLine(secondData))
+
+                    };
+
+                //Call the resize function whenever a resize event occurs
+                    d3.select(window).on('resize', resize);
+
+                    // Call the resize function
+                    resize();     
+
+      </script>
+
+</body>
+
+</html>
